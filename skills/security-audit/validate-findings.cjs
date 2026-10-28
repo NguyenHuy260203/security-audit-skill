@@ -701,6 +701,10 @@ function enforceJsonTextLimits(contents) {
 }
 
 function run(file) {
+  if (file === "--help" || file === "-h") {
+    console.log("Usage: node validate-findings.cjs <path-to-findings.json>");
+    return 0;
+  }
   if (!file) {
     console.error("Usage: node validate-findings.cjs <path-to-findings.json>");
     return 1;

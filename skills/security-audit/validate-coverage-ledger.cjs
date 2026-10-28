@@ -806,6 +806,10 @@ function validateDocument(ledger) {
 }
 
 function run(file) {
+  if (file === "--help" || file === "-h") {
+    console.log("Usage: node validate-coverage-ledger.cjs <path-to-coverage-ledger.json>");
+    return 0;
+  }
   if (!file) {
     console.error("Usage: node validate-coverage-ledger.cjs <path-to-coverage-ledger.json>");
     return 1;
