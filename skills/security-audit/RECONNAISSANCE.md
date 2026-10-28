@@ -12,7 +12,7 @@ Launch several `research` agents in parallel. They return structured facts to th
 Read the target at <target>. Do not use network access. Return:
 1. Product type, users, operators, and ordinary trust-sensitive actions.
 2. Languages, frameworks, build system, runtimes, and locally visible deployment models.
-3. Repository-relative entry points and subsystem boundaries.
+3. Repository-relative entry points and subsystem boundaries. Identify pluggable frameworks, workflow engines, state machines, and SPI registries (e.g., META-INF/services, plugin descriptors) that dynamically dispatch requests.
 4. Exact build and test commands that could run offline with local dependencies, their expected write locations, and the target-controlled inputs they process. Do not run them during reconnaissance.
 5. Comparable software or protocol visible from local documentation and dependencies. If no useful comparison is source-grounded, say so.
 6. Missing local toolchains or runtime facts that limit bounded execution.
@@ -29,6 +29,7 @@ Read all source that establishes identity, authorization, isolation, and privile
 4. Process, browser, workload, CI, plugin, model/tool, device, or local-IPC authority.
 5. Privilege changes, confirmation, revocation, recovery, and fallback paths.
 6. Which controls are source-visible and which depend on an unobserved deployment fact.
+7. Multi-step workflows and dual-method interfaces (e.g. authenticate/action, prepare/execute, challenge/verify): map whether submission/action handlers are reachable directly via HTTP/API without prior challenge completion.
 Return trust boundaries and control locations with repository-relative file:line references. Do not infer live reachability.
 ```
 
@@ -37,6 +38,7 @@ Return trust boundaries and control locations with repository-relative file:line
 ```text
 Inventory every source-visible place external or lower-trust input enters:
 - HTTP/browser, RPC/message/protocol, files/archive/document, CLI/env/config, plugins/dependencies/CI, cloud events/IAM selectors, model context/tool arguments, mobile/deep-link/webview, and local IPC.
+- Pluggable state-machine and workflow step handlers: do NOT coarsen pipeline engines into a single outer controller (e.g., a login actions or workflow dispatcher). Enumerate each discrete authenticator, step handler, and action token handler as an independent entry surface.
 For each surface, follow major transformations, stored or derived copies, and security-relevant sinks. Record source-visible limits and parallel paths to the same effect.
 Return repository-relative paths and line numbers. Be complete, but do not execute or send inputs.
 ```
@@ -89,7 +91,7 @@ Do not select a companion file merely because the language or dependency name ap
 
 ## Deterministic coverage ledger
 
-The parent writes `<output-dir>/coverage-ledger.json` as a top-level JSON array. Derive one unit for every material combination of entry surface, trust boundary, subsystem, and applicable ordinary or companion attack class at the granularity the run profile sets (`quick` uses one all-in-scope subsystem identity; `deep` adds lifecycle modes). For a scoped run, seed in-scope surfaces for assignment and retain discovered excluded surfaces as `out_of_scope` units so later full runs can turn them into current work.
+The parent writes `<output-dir>/coverage-ledger.json` as a top-level JSON array. Derive one unit for every material combination of entry surface, trust boundary, subsystem, and applicable ordinary or companion attack class at the granularity the run profile sets (`quick` uses one all-in-scope subsystem identity; `deep` adds lifecycle modes). In pluggable workflow engines and multi-step state machines (e.g., authentication flows, pipeline steps), decompose the engine into units per state transition handler / authenticator implementation rather than coarsening them into the outer dispatcher controller. For a scoped run, seed in-scope surfaces for assignment and retain discovered excluded surfaces as `out_of_scope` units so later full runs can turn them into current work.
 
 Each dimension has a human label and a stable source-derived value in `canonical_refs`. Use the same canonical reference for the same source object across runs even if its display label changes. Suitable references include a repository-relative entry path plus exported scope, a route or message identity defined in source, the source control that defines a boundary, a repository package path, and the exact attack-class block reference. A block reference is `FILE.md#` plus the exact class name as written in bold or as a heading in that file — a stable identifier matched against the file text, not a rendered HTML anchor. For companion section blocks, use the heading text before any parenthetical qualifier (for example `Core discipline`). Do not derive references by lowercasing or slugging display labels.
 

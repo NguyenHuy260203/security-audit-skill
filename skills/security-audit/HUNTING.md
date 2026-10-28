@@ -62,6 +62,18 @@ accepts them. Compare canonicalization and units at every parser or policy hando
 For multi-step issues, treat each output as a prerequisite and do not assume a later
 boundary. If any prerequisite is not established, record a blocker.
 
+AUDIT DUAL-METHOD AND MULTI-STEP WORKFLOW CONTRACT SYMMETRY. In workflow engines,
+state machines, or authenticators with paired lifecycle methods (e.g. `authenticate`/`action`,
+`prepare`/`execute`, `challenge`/`verify`, `initiate`/`callback`):
+- Check whether the submission/action handler assumes that prerequisites from the initiate/challenge
+  handler were already validated.
+- Test whether a direct HTTP POST, action execution endpoint, or ambient step selector ('try another
+  way') can invoke the action handler directly.
+- Verify whether the action handler unconditionally marks steps successful (e.g., calling
+  `context.success()` without verifying an action token, callback proof, or cryptographic challenge).
+- Ensure out-of-band proofs (email links, SMS OTP, external approvals) are strictly bound to the
+  current session and re-validated inside the action handler.
+
 When a proposed high or critical candidate reveals a reusable root cause, search paths
 owned by the assigned coverage IDs for lexical, structural, and logical variants.
 Consolidate the same root cause, but establish each variant's conditions and impact
