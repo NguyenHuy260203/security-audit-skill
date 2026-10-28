@@ -64,6 +64,7 @@ For complex access models, split into separate agents for auth bypass vs authori
 **Business logic** (subagent_type: `general`)
 Hunt logic errors by hand: standard scanners cannot find them, and they yield high-impact findings. For each major workflow:
 - **State machine violations**: Can you skip steps? Go backwards? Reach an invalid state? What happens if you replay a completed flow? What about partial failure — if step 2 of 3 fails, is step 1 rolled back?
+- **Contract asymmetry and dual-method inconsistency**: In workflow, authenticator, or state-transition interfaces with paired methods (e.g., `prepare`/`execute`, `challenge`/`verify`, `authenticate`/`action`), check whether the submission/action handler assumes the challenge/display handler's prerequisites are already met. Can an attacker directly invoke the action handler via API to bypass an out-of-band challenge (email, OTP, approval)?
 - **Race conditions with business impact**: Concurrent operations that produce invalid states (double-spend, double-approve, lost updates). Focus on operations that check-then-act non-atomically.
 - **Numeric/quantity manipulation**: Negative values, zero values, overflow, precision loss, type coercion between string and number.
 - **Access boundary violations**: Not "does the permission check exist" but "is it the right check for the business rule?" Can input to one operation bypass a restriction enforced on a different operation for the same effect?
