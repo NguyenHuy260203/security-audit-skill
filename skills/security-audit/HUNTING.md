@@ -74,6 +74,11 @@ state machines, or authenticators with paired lifecycle methods (e.g. `authentic
 - Ensure out-of-band proofs (email links, SMS OTP, external approvals) are strictly bound to the
   current session and re-validated inside the action handler.
 
+AUDIT WIRE DESERIALIZERS AND OBJECT TRAVERSAL CONTRACTS. In RPC, Flight, or custom wire decoders that resolve referenced properties (e.g. `$id:prop1:prop2`):
+- Verify whether property traversal validates `Object.prototype.hasOwnProperty.call(target, prop)` to prevent prototype chain traversal (`__proto__`, `constructor`).
+- Verify whether internal state objects (such as `Chunk`, `Response`, `Context`) use unforgeable private `Symbol` or `WeakMap` keys rather than plain string properties.
+- Check whether awaiting deserializer returns triggers execution side-effects via Promise/thenable hooks (`Chunk.prototype.then`) before caller-level authentication.
+
 When a proposed high or critical candidate reveals a reusable root cause, search paths
 owned by the assigned coverage IDs for lexical, structural, and logical variants.
 Consolidate the same root cause, but establish each variant's conditions and impact

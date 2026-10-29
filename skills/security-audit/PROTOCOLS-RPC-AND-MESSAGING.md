@@ -27,6 +27,9 @@ Unknown variants, missing discriminators, zero values, default privileges, or co
 **Envelope and payload identity mismatch**
 Authorization uses trusted-looking routing or envelope metadata while the handler acts on a conflicting tenant, account, subject, object, or sender in the body. Identify which source is authoritative and ensure clients cannot override it.
 
+**Wire-format reference traversal and deserializer gadget hooks**
+When wire protocols or RPC formats support intra-payload object references (e.g. `$id:path` in Flight format, JSON-RPC object links, or cyclic graph decoders), verify that path traversal is strictly confined to own properties (`hasOwnProperty`). Check whether resolving references can traverse to `Object.prototype`, and whether the returned deserialized model implements thenable hooks (`.then()`) that execute automatically when awaited by downstream framework code.
+
 ## RPC identity and authorization attack classes (subagent_type: `general`)
 
 **Interceptor and method-path inconsistency**
